@@ -1,0 +1,134 @@
+# Technical Details
+
+This section is best placed **after "Working Principle"** and **before "Telegram Bot Configuration"** in your README. It explains the system architecture, communication flow, networking, protocols, and security without overwhelming the reader.
+
+---
+
+## Frontend (User Interface)
+
+The frontend consists of the components that the user directly interacts with.
+
+* Telegram mobile or desktop application
+* 16×2 I2C LCD for message display
+* YES (OK) response button
+* NO (BUSY) response button
+* Passive buzzer for audio notifications
+* Internet status LED
+* ESP32 as the main control interface
+
+---
+
+## Backend (Processing System)
+
+The backend is responsible for processing all communication and device operations.
+
+* ESP32 Microcontroller
+* Telegram Bot API
+* Telegram Cloud Servers
+* Wi-Fi Router / Internet Gateway
+* NTP Time Server for timestamp synchronization
+* Internal message logging system
+* Message processing and response handling firmware
+
+---
+
+## Communication Architecture
+
+The complete communication path is:
+
+```
+Telegram User
+      │
+      ▼
+Telegram Cloud Server
+      │
+      ▼
+Telegram Bot API
+      │
+ HTTPS (TLS Encrypted)
+      │
+      ▼
+Wi-Fi Router
+      │
+      ▼
+ESP32 Microcontroller
+      │
+ ┌────┼────┐
+ ▼    ▼    ▼
+LCD  Buzzer Buttons
+```
+
+---
+
+## Networking Specifications
+
+* Wireless Standard: IEEE 802.11 b/g/n (Wi-Fi)
+* Network Type: Infrastructure Mode
+* Internet Connectivity: Wi-Fi Router
+* Communication Method: Client–Server Architecture
+* Message Retrieval: Telegram Bot API Polling
+* Time Synchronization: Network Time Protocol (NTP)
+* Internet Verification: DNS Connectivity Check
+* Network Addressing: Dynamic IP (DHCP)
+
+---
+
+## Communication Protocols
+
+| Layer                | Protocol                 |
+| -------------------- | ------------------------ |
+| Application          | Telegram Bot API         |
+| Application          | HTTP GET / POST Requests |
+| Security             | HTTPS                    |
+| Encryption           | TLS / SSL                |
+| Transport            | TCP                      |
+| Network              | IPv4                     |
+| Time Synchronization | NTP                      |
+| Wireless             | IEEE 802.11 Wi-Fi        |
+
+---
+
+## Security Features
+
+* Secure HTTPS communication with Telegram servers
+* TLS encryption protects messages during transmission
+* Telegram Bot Token used for device authentication
+* Authorized Chat ID restricts device communication
+* Hidden maintenance/inspection mode for debugging
+* Local message logging without cloud storage
+* Automatic Wi-Fi reconnection after network failure
+
+---
+
+## Data Flow
+
+1. User sends a message through Telegram.
+2. Telegram Cloud forwards the message to the Bot API.
+3. ESP32 periodically checks for new updates.
+4. Incoming messages are downloaded securely over HTTPS.
+5. The message is displayed on the LCD.
+6. A buzzer notification alerts the user.
+7. Message details are stored in the internal log.
+8. The user presses the YES or NO button.
+9. ESP32 sends the selected response back through the Telegram Bot API.
+
+---
+
+## Performance Characteristics
+
+* Real-time Internet-based communication
+* Automatic recovery after Wi-Fi disconnection
+* Continuous Internet availability monitoring
+* Lightweight polling mechanism
+* Low memory usage using circular message logging
+* Suitable for continuous 24×7 operation
+
+---
+
+## Security Level of Messaging
+
+* **Confidentiality:** High – Messages are transmitted using HTTPS with TLS encryption.
+* **Integrity:** High – Encrypted communication reduces the risk of message tampering during transmission.
+* **Authentication:** Bot Token and authorized Chat ID help ensure that only configured users can interact with the pager.
+* **Availability:** Automatic Wi-Fi reconnection and Internet monitoring improve system reliability.
+* **Current Limitations:** The project does not implement end-to-end encryption, message signing, or multi-user access control. These can be added in future versions for enhanced security.
