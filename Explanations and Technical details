@@ -1,0 +1,286 @@
+📟 Modern IoT Pager System Using ESP32 and Telegram Bot API
+
+
+~Overview~
+
+The "Modern IoT Pager System" is an ESP32-based wireless notification device that utilizes the Telegram Bot API to deliver real-time messages over the Internet. Unlike conventional RF pagers, this system relies on Wi-Fi connectivity and Telegram's secure cloud infrastructure, enabling long-distance communication without requiring dedicated radio hardware.
+When a message is sent to the Telegram bot, the ESP32 retrieves it securely, displays it on a 16×2 LCD, and alerts the user using distinct buzzer tones. The user can respond instantly using dedicated hardware buttons without interacting with a smartphone. The system also monitors Internet connectivity, stores communication logs, detects repeated messaging activity, and automatically reconnects to Wi-Fi after network interruptions.
+This project demonstrates the practical integration of Embedded Systems, Internet of Things (IoT), Cloud Messaging, and Human-Machine Interfaces into a compact, low-cost communication device suitable for educational, industrial, and research applications.
+
+
+~Features~
+
+* Real-time Telegram message reception
+* Secure communication using Telegram Bot API
+* ESP32-based wireless communication
+* Automatic Wi-Fi connection and reconnection
+* Internet availability monitoring using dedicated status LED
+* 16×2 I2C LCD message display
+* Automatic scrolling of long messages
+* Dedicated hardware response buttons
+* Instant "OK / YES" response
+* Instant "NO / BUSY" response
+* Event-based buzzer notification system
+* Automatic message logging
+* Circular storage for recent communication history
+* Hidden inspection mode for maintenance
+* Secure log deletion
+* Basic spam detection
+* Time-stamped communication records
+* Fully standalone operation without mobile interaction
+
+
+~Hardware Components~
+
+| Component                |    Quantity | Purpose                    |
+| ------------------------ | ----------: | -------------------------- |
+| ESP32 Development Board  |           1 | Main controller            |
+| 16×2 LCD with I2C Module |           1 | Message display            |
+| Push Button (OK/YES)     |           1 | Positive response          |
+| Push Button (NO/BUSY)    |           1 | Negative response          |
+| Passive Buzzer           |           1 | Audio notifications        |
+| Green LED                |           1 | Internet status indication |
+| 220Ω Resistor            |           1 | LED current limiting       |
+| Breadboard / PCB         |           1 | Circuit assembly           |
+| Jumper Wires             | As required | Electrical connections     |
+| 5V Power Supply          |           1 | System power               |
+| Wi-Fi Network            |           1 | Internet connectivity      |
+
+
+~Pin Configuration~
+
+| ESP32 Pin | Connected Device | Description               |
+| --------- | ---------------- | ------------------------- |
+| GPIO 21   | LCD SDA          | I2C Data                  |
+| GPIO 22   | LCD SCL          | I2C Clock                 |
+| GPIO 14   | Push Button      | OK / YES Response         |
+| GPIO 12   | Push Button      | NO / BUSY Response        |
+| GPIO 25   | Passive Buzzer   | Notification tones        |
+| GPIO 26   | Green LED        | Internet Status Indicator |
+| 5V        | LCD, LED         | Power Supply              |
+| GND       | Common Ground    | System Ground             |
+
+
+~Working Principle~
+
+1. The ESP32 powers ON and initializes all peripherals.
+2. The LCD displays the startup animation.
+3. The ESP32 connects to the configured Wi-Fi network.
+4. The device synchronizes date and time using an NTP server.
+5. A secure HTTPS connection with Telegram Bot API is established.
+6. The system continuously checks for new Telegram messages.
+7. Incoming messages are stored in internal memory.
+8. A timestamp is generated for every received message.
+9. The LCD displays the received message.
+10. Messages longer than sixteen characters automatically scroll.
+11. Different buzzer tones notify different system events.
+12. The Internet Status LED continuously indicates Internet availability.
+13. The user can acknowledge the message by pressing the OK button.
+14. The user can reject or indicate unavailability by pressing the NO button.
+15. The selected response is instantly transmitted back through Telegram.
+16. The system automatically reconnects if Wi-Fi is lost.
+17. Communication logs are maintained for debugging and inspection.
+18. The device continues operating indefinitely without requiring manual restart.
+
+
+~Telegram Bot Configuration~
+
+~~Create a Telegram Bot~~
+
+1. Install Telegram on your mobile phone or desktop.
+2. Search for **@BotFather**.
+3. Start a conversation.
+4. Send:
+
+/start
+
+5. Create a new bot by sending:
+
+/newbot
+
+6. Enter a display name for your bot.
+7. Choose a unique bot username ending with **bot**.
+8. BotFather will generate a unique Bot Token.
+
+Example:
+
+123456789:AAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+Keep this token private. Anyone with access to the token can control your bot.
+
+~~Obtain Chat ID~~
+
+The ESP32 must know which Telegram user it should communicate with.
+
+Steps:
+
+1. Send any message to your newly created bot.
+2. Open the following URL in your browser (replace `<BOT_TOKEN>` with your token):
+
+https://api.telegram.org/bot<BOT_TOKEN>/getUpdates
+
+3. Locate the following field in the returned JSON:
+
+"chat":{"id":123456789}
+
+4. Copy the numerical value.
+
+This is your Chat ID.
+
+~~Connect the Bot~~
+
+Open the Arduino sketch and configure the following values:
+
+* Wi-Fi SSID
+* Wi-Fi Password
+* Telegram Bot Token
+* Telegram Chat ID
+
+Upload the program to the ESP32.
+
+Once connected, the LCD will display:
+
+```
+Online: Pager
+```
+
+The device is now ready to receive messages.
+
+---
+
+~Code Configuration~
+
+Before uploading the firmware, configure the following parameters:
+
+* Wi-Fi SSID
+* Wi-Fi Password
+* Telegram Bot Token
+* Telegram Chat ID
+
+---
+
+# Sample Messages
+
+## User Sends
+
+```
+Meeting at 10 AM.
+```
+
+Pager Displays
+
+```
+Meeting at 10 AM.
+```
+
+---
+
+## Long Message
+
+```
+Please report immediately to the Electrical Maintenance Room.
+```
+
+LCD automatically scrolls the message until it has been fully displayed.
+
+---
+
+## User Presses OK
+
+Telegram receives:
+
+```
+Pager Response: OK/YES
+```
+
+---
+
+## User Presses NO
+
+Telegram receives:
+
+```
+Pager Response: NO/BUSY
+```
+
+---
+
+## Wi-Fi Lost
+
+LCD
+
+```
+Disconnected
+Seeking WiFi...
+```
+
+The device automatically reconnects without user intervention.
+
+---
+
+~~Inspection Mode~~
+
+The system includes a protected maintenance mode for viewing stored communication logs and registered users. This feature is intended only for authorized debugging and maintenance and is not documented publicly for security reasons.
+
+
+~Literature Review~
+
+Recent developments in IoT-based communication systems have shifted from traditional RF pagers to Internet-enabled notification devices due to their improved communication range, lower infrastructure costs, and higher reliability.
+
+ESP32 has become one of the most widely adopted microcontrollers for IoT applications because of its integrated Wi-Fi, sufficient processing capability, and extensive software ecosystem. Telegram Bot API has emerged as a secure and accessible cloud messaging platform for embedded devices, offering encrypted communication, cross-platform availability, and straightforward integration through HTTPS.
+
+Several studies have demonstrated ESP32-based monitoring and alert systems in applications such as home automation, industrial monitoring, healthcare, and security. However, most implementations focus primarily on transmitting sensor data or alerts. The proposed Modern IoT Pager System extends these concepts by introducing a dedicated hardware user interface, physical acknowledgement buttons, intelligent communication logging, Internet connectivity monitoring, event-specific audio notifications, automatic recovery from network interruptions, and a protected maintenance mode, making it suitable for real-time human-device interaction.
+
+
+~Future Improvements~
+
+Possible enhancements include:
+
+* End-to-end encrypted message authentication
+* Multiple authorized Telegram users
+* Group chat support
+* OLED or TFT graphical display
+* Touchscreen interface
+* Rechargeable Li-ion battery management
+* USB Type-C charging
+* Deep Sleep power optimization
+* Over-the-Air (OTA) firmware updates
+* SD Card communication history
+* EEPROM/Flash memory optimization
+* FreeRTOS multitasking implementation
+* Interrupt-driven button handling
+* Machine Learning-based spam detection
+* Priority message classification
+* Message acknowledgement tracking
+* Vibration motor for silent notifications
+* RGB status indication
+* Voice notifications using DFPlayer Mini
+* Microphone support for voice commands
+* GSM/LTE fallback communication
+* LoRa long-range communication backup
+* Bluetooth configuration interface
+* Companion Android application
+* Web dashboard for remote monitoring
+* MQTT and cloud platform integration
+* AES-based encrypted message storage
+* Fingerprint authentication for maintenance mode
+* RFID user authentication
+* GPS location reporting
+* Environmental sensors (Temperature, Humidity, Air Quality)
+* Motion and vibration sensing
+* Battery percentage monitoring
+* Solar-powered operation
+* Multi-language user interface
+* AI-assisted automatic response generation
+* Multi-threaded communication architecture
+
+
+~Author~
+
+**Vipul Borkar**
+
+Bachelor of Technology (Electronics and Telecommunication Engineering)
+
+Embedded Systems | Internet of Things (IoT) | ESP32 | Arduino | Microcontroller Programming | Electronics Design
+
+This project was developed as part of academic learning and research to demonstrate the practical implementation of modern IoT communication systems using low-cost embedded hardware and cloud-based messaging services.
